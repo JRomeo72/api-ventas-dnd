@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drag and Drop</title>
+<style>
+    #draggable {
+        width: 100px;
+        height: 100px;
+        background-color: #f00;
+        cursor: pointer;
+        position: absolute;
+    }
+</style>
+</head>
+<body>
+
+<div id="draggable" draggable="true">Drag me!</div>
+
+<script>
+    const draggable = document.getElementById('draggable');
+    console.log(draggable)
+
+    // Event listeners para dispositivos de escritorio
+    draggable.addEventListener('dragstart', (event) => {
+        event.dataTransfer.setData('text/plain', ''); // necesario para Firefox
+    });
+
+    // Event listeners para dispositivos móviles
+    draggable.addEventListener('touchstart', (event) => {
+        console.log(event.target)
+        const touch = event.targetTouches[0];
+
+        const offsetX = touch.clientX - parseInt(draggable.style.left || 0);
+        const offsetY = touch.clientY - parseInt(draggable.style.top || 0);
+
+        function handleMove(e) {
+            e.preventDefault();
+            const touch = e.targetTouches[0];
+            draggable.style.left = touch.clientX - offsetX + 'px';
+            draggable.style.top = touch.clientY - offsetY + 'px';
+        }
+
+        function handleEnd(e) {
+            e.preventDefault();
+            document.removeEventListener('touchmove', handleMove);
+            document.removeEventListener('touchend', handleEnd);
+        }
+
+        document.addEventListener('touchmove', handleMove);
+        document.addEventListener('touchend', handleEnd);
+    });
+</script>
+
+</body>
+</html>
